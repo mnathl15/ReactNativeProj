@@ -31,7 +31,7 @@ import { SignIn } from 'aws-amplify-react-native/dist/Auth';
     <View>
         <Signup/>
         
-        <Signin/>
+        {/* <Signin/> */}
     </View>
     
   )

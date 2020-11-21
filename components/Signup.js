@@ -20,15 +20,11 @@ const styles = StyleSheet.create ({
         padding:50
     },
     input:{
-        
         borderStyle:'solid', 
         width:250,
         margin:15,
         height:40,
-        
-        
     },
-
     button:{
         marginTop:50,
         width:150,
@@ -36,39 +32,32 @@ const styles = StyleSheet.create ({
         padding:0,
         justifyContent:'center',
         alignItems:'center',
-       
-
-        
     },
     text:{
         fontSize:13,
         color:'black',
-        
-        
-        
     }
-  
-})
+  })
 
 const Signup=()=>{
 
-    const [formData,setFormData] = useState({
-        email:{value:'',error:''},
-        name:{value:'',error:''},
-        password:{value:'',error:''},
-        retype_password:{value:'',error:''},
-        bday:{value:'06-19-1997',error:''}
-
+    var [formData,setFormData] = useState({
+        fields:{
+            email:{value:'',error:''},
+            name:{value:'',error:''},
+            password:{value:'',error:''},
+            retype_password:{value:'',error:''},
+            bday:{value:'06-19-1997',error:''}
+        },
+        formNum:1
     });
 
    
     const [newFormReady, setNewFormReady] = useState(false);
-    const [formSuccess,setFormSuccess] = useState(false);
+    
+    const [user,setUser] = useState({});
 
-
-    const submitConfCode = ()=>{
-        confirmSignUp()
-    }
+   
 
     const submit = async ()=>{
         formData = JSON.parse(verifyForm(formData));
@@ -80,14 +69,17 @@ const Signup=()=>{
         });
 
         if(formErrors <= 0){
-            if(formSuccess){
-                const conf = await confirmSignUp(formData.email.value,conf_code);
+            if(formData.formNum==2){
+                const conf = await confirmSignUp(formData.fields.email.value,conf_code);
             }
             else{
-                const user = await signUp({...formData});
+                const user = await signUp({...formData.fields});
+                console.log(user);
+                setUser(user);
+                
             }
-            setSuccess(true);
-            setNewFormReady
+            
+           
             return;
         }
             
@@ -99,105 +91,124 @@ const Signup=()=>{
     // Have to make sure both the success and new state is ready before we load new form
     
     useEffect(()=>{
-        if(formSuccess){
-            setFormData({conf_code:{value:'',error:''}});
-        }
-        
-    },[success])
+        console.log(user);
+        try{
+            if(user.user){
+                
+                setFormData({fields:{conf_code:{value:'',error:''}},formNum:2});
+            }
+            else if(user.code){
+                console.log(user.code);
+            }
+           
+        }catch(error){
+            console.log(error);
+       }
+    },[user]);
+
 
     useEffect(()=>{
-        if(formSuccess){
+        
+        if(!newFormReady && formData.formNum==2){
             setNewFormReady(true);
         }
     },[formData]);
 
 
     const updateField=(name,value)=>{
-        setFormData(state=>({...state,[name]:{...state[name],"value":value}}));
+        setFormData(
+            {
+                fields:{...formData.fields,[name]:{...formData.fields[name],"value":value}},
+                formNum:formData.formNum
+            }
+
+        )
     }
 
+
+    
 
     return(
         <View style={styles.container}>
             <View style={styles.form}>
 
                 
-                {!formSuccess && 
+                {(formData.formNum ==1) && 
                 <View>
                     <View>
                         <Text>
-                        {formData.email.error} 
+                        {formData.fields.email.error} 
                         </Text>
                         <TextInput
                                 placeholder="Email"
                                 name="email"
                                 onChangeText={(value)=>updateField('email',value)}
-                                value={formData.email.value}
+                                value={formData.fields.email.value}
                                 style={styles.input}
                         />
                     </View>
                 
                     <View>
                         <Text>
-                        {formData.name.error} 
+                        {formData.fields.name.error} 
                         </Text>
                         <TextInput
                                 placeholder="Name"
                                 name="name"
-                                error={state.name.error}
+                                error={formData.fields.name.error}
                                 onChangeText={(value)=>updateField('name',value)}
-                                value={state.name.value}
+                                value={formData.fields.name.value}
                                 style={styles.input}
                         /> 
                     </View>
                     <View>
                         <Text>
-                            {formData.password.error} 
+                            {formData.fields.password.error} 
                         </Text>
                         <TextInput
                             placeholder="Password"
                             name="password"
                             onChangeText={(value)=>updateField('password',value)}
-                            value={formData.password.value}
+                            value={formData.fields.password.value}
                             style={styles.input}
                         />
                     </View>
 
                     <View>
                         <Text>
-                            {formData.retype_password.error} 
+                            {formData.fields.retype_password.error} 
                         </Text>
                         <TextInput
                             placeholder="Retype Password"
                             name="retype_password"
                             onChangeText={(value)=>updateField('retype_password',value)}
-                            value={formData.retype_password.value}
+                            value={formData.fields.retype_password.value}
                             style={styles.input}
                         />
                     </View>
                 </View>
 }
-                {(formSuccess && newFormReady) &&
+                {(formData.formNum==2 && newFormReady) &&
                     <View>
                         <Text>
-                            {formData.conf_code.error} 
+                            {formData.fields.conf_code.error} 
                         </Text>
                         <TextInput
                             placeholder="Confirmation Code"
                             name="conf_code"
                             onChangeText={(value)=>updateField('conf_code',value)}
-                            value={formData.conf_code.value}
+                            value={formData.fields.conf_code.value}
                             style={styles.input}
                         />
                     </View>
                 }
                 
                 <TouchableOpacity 
-                     onPress={(formSuccess && newFormReady) ?submitConfCode :submit}
+                     onPress={submit}
                      style={styles.button}
                 >
                     <Text style={styles.text}>
-                    {(formSuccess && newFormReady) ? "Submit Confirmation!" : "Join!"}
+                    {(formData.formNum==2 && newFormReady) ? "Submit Confirmation!" : "Join!"}
                     </Text>
                 </TouchableOpacity>
                

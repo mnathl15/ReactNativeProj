@@ -26,7 +26,7 @@ export const signUp = async (state)=>{
         console.log(user);
         return(user);
     }catch(error){
-        console.log(error);
+        return(error);
     }
    
     

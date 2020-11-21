@@ -52,22 +52,22 @@ const styles = StyleSheet.create ({
 })
 
 const submitConfCode = ()=>{
-    
+
 }
 
 const Signin=()=>{
 
-    const [state,setState] = useState({
+    const [formData,setFormData] = useState({
         email:{value:'',error:''},
         password:{value:'',error:''},
-
     });
     const [userSubmitError,setUserSubmitError] = useState("");
-    const [success,setSuccess] = useState(false);
+    const [formSuccess,setSuccess] = useState(false);
     const [newFormReady, setNewFormReady] = useState(false);
+    const [user,setUser] = useState({});
     
     const submit = async ()=>{
-        const formData = JSON.parse(verifyForm(state));
+        const formData = JSON.parse(verifyForm(formData));
         let errors = 0;
         Object.entries(formData).map((element)=>{
             if(element[1].error){
@@ -76,36 +76,39 @@ const Signin=()=>{
         });
 
         if(errors <= 0){
-            const user = await signIn({...state});
-            console.log(user);
-            setSuccess(true)
+            const user = await signIn({...formData});
+            setUser(user);
+            // setSuccess(true)
             if(user.code){
                 console.log(user.code);
                 setUserSubmitError(user.code);
             }
         }
             
-        setState(formData);
+        setFormData(formData);
 
     }
     const updateField=(name,value)=>{
-        setState(state=>({...state,[name]:{...state[name],"value":value}}));
+        setFormData(formData=>({...formData,[name]:{...formData[name],"value":value}}));
     }
 
     useEffect(()=>{
-        if(userSubmitError){
-            if(userSubmitError==CONFIRMATION_EXCEPTION){
-                setState({conf_code:{value:'',error:''}});
+        try{
+            if(user.code==CONFIRMATION_EXCEPTION){
+                setFormData({conf_code:{value:'',error:''}});
             }
+        }catch(error){
+            console.log(error);
         }
+
         
-    },[userSubmitError])
+    },[user])
 
     useEffect(()=>{
-        if(userSubmitError){
+        if(user){
             setNewFormReady(true);
         }
-    },[state]);
+    },[formData]);
 
 
 
@@ -115,11 +118,11 @@ const Signin=()=>{
             <View style={styles.form}>
 
                 
-                {!success &&
+                {!formSuccess &&
                 <View>
                     <View>
                         <Text>
-                        {state.email.error} 
+                        {formData.email.error} 
                         </Text>
                         <TextInput
                                 placeholder="Email"
@@ -132,11 +135,11 @@ const Signin=()=>{
                 
                     <View>
                         <Text>
-                            {state.password.error} 
+                            {formData.password.error} 
                         </Text>
                         <TextInput
                             placeholder="Password"
-                            error={state.password.error}
+                            error={formData.password.error}
                             name="password"
                             onChangeText={(value)=>updateField('password',value)}
 
@@ -146,17 +149,17 @@ const Signin=()=>{
                 </View>
                 }
 
-                {(userSubmitError && newFormReady) &&
+                {(user && newFormReady) &&
                     <View>
                         <Text>
-                            {state.conf_code.error} 
+                            {formData.conf_code.error} 
                         </Text>
                         <TextInput
                             placeholder="Confirmation Code"
-                            error={state.conf_code.error}
+                            error={formData.conf_code.error}
                             name="conf_code"
                             onChangeText={(value)=>updateField('conf_code',value)}
-                            value={state.conf_code.value}
+                            value={formData.conf_code.value}
                             style={styles.input}
                         />
                     </View>
