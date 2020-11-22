@@ -12,29 +12,28 @@ import { SignIn } from 'aws-amplify-react-native/dist/Auth';
 
 
   const App=()=>{
-  
-  return(
-    // <NativeRouter>
-    //   <View>
-    //     <Route exact path="/" component={Signup}/>
-    //     <Route exact path="signin" component={Signin}/>
-      
-        
-        
-       
-    //     {/* <SignIn/> */}
-    
-      
-    //   </View>
-    // </NativeRouter>
 
-    <View>
-        <Signup/>
-        
-        {/* <Signin/> */}
-    </View>
+    const[user,setUser] = useState();
+
+  
+
+
+  
+    return(
+      <View>
+          {/* <Signup 
+            setUser={(user)=>setUser(user)}
+            user={user}
+          /> */}
+          <Signin 
+            setUser={(user)=>setUser(user)}
+            user={user}
+          />
+          
+          
+      </View>
     
-  )
+    )
 } 
 
 

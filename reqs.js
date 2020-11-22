@@ -45,18 +45,20 @@ export const signIn = async(state)=>{
         console.log(user);
         return user;
     }catch(error){
+        console.log(error);
         return(error);
     }
     
     
 }
 
-export const confirmSignUp = async(email,conf_code)=>{
+export const confirmSignUp = async(username,conf_code)=>{
     try{
-        const conf = await Auth.confirmSignUp(emaiil,conf_code);
+        const conf = await Auth.confirmSignUp(username,conf_code);
+        return conf;
     }
     catch(error){
-        console.log(error);
+        return error;
     }
     
 }

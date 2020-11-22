@@ -51,66 +51,81 @@ const styles = StyleSheet.create ({
   
 })
 
-const submitConfCode = ()=>{
 
-}
+const Signin=({user,setUser})=>{
 
-const Signin=()=>{
-
-    const [formData,setFormData] = useState({
-        email:{value:'',error:''},
-        password:{value:'',error:''},
+    let [formData,setFormData] = useState({
+        fields:{
+            email:{value:'',error:''},
+            password:{value:'',error:''},
+        },
+        formNum:1
     });
-    const [userSubmitError,setUserSubmitError] = useState("");
-    const [formSuccess,setSuccess] = useState(false);
+    const[userSubmitError,setUserSubmitError] = useState("");
     const [newFormReady, setNewFormReady] = useState(false);
-    const [user,setUser] = useState({});
-    
+    const [awsError,setAwsError] = useState();
+
+
     const submit = async ()=>{
-        const formData = JSON.parse(verifyForm(formData));
-        let errors = 0;
-        Object.entries(formData).map((element)=>{
+        formData = JSON.parse(verifyForm(formData));
+        let formErrors = 0;
+        Object.entries(formData.fields).map((element)=>{
             if(element[1].error){
-                errors+=1;
+                formErrors+=1;
             }
         });
 
-        if(errors <= 0){
-            const user = await signIn({...formData});
-            setUser(user);
-            // setSuccess(true)
-            if(user.code){
-                console.log(user.code);
-                setUserSubmitError(user.code);
+        if(formErrors <= 0){
+
+            if(formData.formNum==2){
+                const conf = await confirmSignUp(user.username,formData.fields.conf_code.value);
             }
+            else{
+                const user = await signIn({...formData.fields});
+                
+                try{
+                    if(user.code){
+                        setAwsError(user.code);
+                        return;
+                    }
+                    setUser(user.user);
+                }catch(error){
+                    console.log(error);
+                }
+            }
+            
         }
             
         setFormData(formData);
 
     }
     const updateField=(name,value)=>{
-        setFormData(formData=>({...formData,[name]:{...formData[name],"value":value}}));
+        setFormData({
+            fields:{...formData.fields,[name]:{...formData.fields[name],"value":value}},
+            formNum:formData.formNum
+        })
     }
 
     useEffect(()=>{
+
         try{
-            if(user.code==CONFIRMATION_EXCEPTION){
-                setFormData({conf_code:{value:'',error:''}});
+            if(awsError==CONFIRMATION_EXCEPTION){
+                
+                setFormData({fields:{conf_code:{value:'',error:''}},formNum:2});
             }
         }catch(error){
             console.log(error);
         }
 
         
-    },[user])
+    },[awsError])
 
     useEffect(()=>{
-        if(user){
+        console.log(formData, newFormReady);
+        if(formData.formNum==2){
             setNewFormReady(true);
         }
     },[formData]);
-
-
 
 
     return(
@@ -118,11 +133,11 @@ const Signin=()=>{
             <View style={styles.form}>
 
                 
-                {!formSuccess &&
+                {formData.formNum ==1 &&
                 <View>
                     <View>
                         <Text>
-                        {formData.email.error} 
+                        {formData.fields.email.error} 
                         </Text>
                         <TextInput
                                 placeholder="Email"
@@ -135,11 +150,11 @@ const Signin=()=>{
                 
                     <View>
                         <Text>
-                            {formData.password.error} 
+                            {formData.fields.password.error} 
                         </Text>
                         <TextInput
                             placeholder="Password"
-                            error={formData.password.error}
+                            error={formData.fields.password.error}
                             name="password"
                             onChangeText={(value)=>updateField('password',value)}
 
@@ -149,28 +164,28 @@ const Signin=()=>{
                 </View>
                 }
 
-                {(user && newFormReady) &&
+                {(formData.formNum==2 && newFormReady) &&
                     <View>
                         <Text>
-                            {formData.conf_code.error} 
+                            {formData.fields.conf_code.error} 
                         </Text>
                         <TextInput
                             placeholder="Confirmation Code"
-                            error={formData.conf_code.error}
+                            error={formData.fields.conf_code.error}
                             name="conf_code"
                             onChangeText={(value)=>updateField('conf_code',value)}
-                            value={formData.conf_code.value}
+                            value={formData.fields.conf_code.value}
                             style={styles.input}
                         />
                     </View>
 
                 }
                 <TouchableOpacity 
-                     onPress={(userSubmitError && newFormReady) ?submitConfCode :submit}
+                     onPress={submit}
                      style={styles.button}
                 >
                     <Text style={styles.text}>
-                        {(userSubmitError && newFormReady) ? "Submit Confirmation!" : "Sign in!"}
+                        {(formData.formNum==2 && newFormReady) ? "Submit Confirmation!" : "Sign in!"}
                     </Text>
                 </TouchableOpacity>
                

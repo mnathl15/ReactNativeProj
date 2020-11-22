@@ -39,7 +39,7 @@ const styles = StyleSheet.create ({
     }
   })
 
-const Signup=()=>{
+const Signup=({user,setUser})=>{
 
     var [formData,setFormData] = useState({
         fields:{
@@ -54,15 +54,15 @@ const Signup=()=>{
 
    
     const [newFormReady, setNewFormReady] = useState(false);
+    const [awsError,setAwsError] = useState();
     
-    const [user,setUser] = useState({});
 
    
 
     const submit = async ()=>{
         formData = JSON.parse(verifyForm(formData));
         let formErrors = 0;
-        Object.entries(formData).map((element)=>{
+        Object.entries(formData.fields).map((element)=>{
             if(element[1].error){
                 formErrors+=1;
             }
@@ -70,16 +70,19 @@ const Signup=()=>{
 
         if(formErrors <= 0){
             if(formData.formNum==2){
-                const conf = await confirmSignUp(formData.fields.email.value,conf_code);
+                const conf = await confirmSignUp(user.username,formData.fields.conf_code.value);
             }
             else{
                 const user = await signUp({...formData.fields});
-                console.log(user);
-                setUser(user);
-                
+
+                if(user.code){
+                    setAwsError(user.code);
+                    return;
+                }
+
+
+                setUser(user.user);
             }
-            
-           
             return;
         }
             
@@ -91,16 +94,10 @@ const Signup=()=>{
     // Have to make sure both the success and new state is ready before we load new form
     
     useEffect(()=>{
-        console.log(user);
         try{
             if(user.user){
-                
                 setFormData({fields:{conf_code:{value:'',error:''}},formNum:2});
             }
-            else if(user.code){
-                console.log(user.code);
-            }
-           
         }catch(error){
             console.log(error);
        }
@@ -116,13 +113,10 @@ const Signup=()=>{
 
 
     const updateField=(name,value)=>{
-        setFormData(
-            {
+        setFormData({
                 fields:{...formData.fields,[name]:{...formData.fields[name],"value":value}},
                 formNum:formData.formNum
-            }
-
-        )
+        })
     }
 
 
