@@ -2,7 +2,6 @@ import emailRegex from "email-regex";
 
 export const verifyForm = (formData) =>{
     let password;
-    console.log(formData);
     Object.keys(formData.fields).map((key)=>{
         formData.fields[key]["error"] = '';
         if(!formData.fields[key].value){

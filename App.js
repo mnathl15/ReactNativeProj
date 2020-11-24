@@ -4,42 +4,36 @@ import {View } from 'react-native';
 import Signup from './components/Signup';
 import Signin from './components/Signin';
 import { SignIn } from 'aws-amplify-react-native/dist/Auth';
+import { Component } from 'react';
+import Confirmation from './components/Confirmation';
+import { NativeRouter,Route,useHistory,useLocation} from 'react-router-native';
+import { Switch } from 'react-native-gesture-handler';
+import Home from './components/Home';
 
 
 
 
 
 
-
-  const App=()=>{
-
-    const[user,setUser] = useState();
-
-  
-
-
-  
-    return(
-      <View>
-          {/* <Signup 
-            setUser={(user)=>setUser(user)}
-            user={user}
-          /> */}
-          <Signin 
-            setUser={(user)=>setUser(user)}
-            user={user}
-          />
-          
-          
-      </View>
+function App(){
     
-    )
-} 
+
+ 
+  return(
+
+    
+    <NativeRouter>
+     <Home/>
+    </NativeRouter>
+  )
+}
+    
 
 
 
 
 
 
-export default App;
+
+export default  App;
 

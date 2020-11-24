@@ -32,7 +32,7 @@
       "web": {
         "build": {
           "babel": {
-            "include": ["react-router-native","galio-framework"]
+            "include": ["react-router-native"]
           }
         }
       }
