@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-//import { NativeRouter, Route } from 'react-router-native';
 
-import { SignIn } from "aws-amplify-react-native/dist/Auth";
-
-import {
-  NativeRouter,
-  Route,
-  useHistory,
-  useLocation,
-  withRouter,
-} from "react-router-native";
+import { Route, withRouter } from "react-router-native";
 import { Switch } from "react-native-gesture-handler";
 import Confirmation from "./Confirmation";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import { getCurrentUser } from "../reqs";
+import Home from "./Home/Home";
 
-function Home({ history }) {
+const DEFAULT_ROUTE = "home";
+
+function MainController({ history }) {
   const [user, setUser] = useState();
-  const [currPage, setCurrPage] = useState("signup");
+  const [currPage, setCurrPage] = useState(`${DEFAULT_ROUTE}`);
   const [confirmEmail, setConfirmEmail] = useState(); //Used to send the email for the confirmation code
 
   useEffect(() => {
@@ -29,10 +23,11 @@ function Home({ history }) {
           history.push(`/${currPage}`, { confirmEmail: confirmEmail });
         }
         return;
-      case "app":
+      case "home":
         if (!!user) {
           history.push(`/${currPage}`, { user: user });
         }
+        return;
       default:
         history.push(`/${currPage}`);
     }
@@ -46,10 +41,10 @@ function Home({ history }) {
             setUser(user.user);
           })
           .catch(() => {
-            history.push("/signup");
+            history.push(`${DEFAULT_ROUTE}`);
           });
       } catch (error) {
-        history.push("/signup");
+        history.push(`${DEFAULT_ROUTE}`);
       }
     };
 
@@ -107,8 +102,22 @@ function Home({ history }) {
           );
         }}
       />
+
+      <Route
+        path="/home"
+        render={(props) => {
+          return (
+            <Home
+              {...props}
+              setCurrPage={(path) => {
+                setCurrPage(path);
+              }}
+            />
+          );
+        }}
+      />
     </View>
   );
 }
 
-export default withRouter(Home);
+export default withRouter(MainController);

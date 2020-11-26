@@ -6,10 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import emailRegex from "email-regex";
 
-import { signIn, signUp } from "../reqs.js";
-import { Authenticator, SignIn } from "aws-amplify-react-native";
+import { signIn } from "../reqs.js";
+
 import { verifyForm } from "../utils/verify.js";
 
 const CONFIRMATION_EXCEPTION = "UserNotConfirmedException";
@@ -75,7 +74,7 @@ const Signin = ({ user, setUser, setConfimation, setCurrPage }) => {
           return;
         }
         setUser(user.user);
-        setCurrPage("app");
+        setCurrPage("home");
       } catch (error) {
         console.log(error);
       }
@@ -129,6 +128,15 @@ const Signin = ({ user, setUser, setConfimation, setCurrPage }) => {
             />
           </View>
         </View>
+
+        <TouchableOpacity
+          onPress={() => {
+            setCurrPage("signup");
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.text}>Don't have an account?</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={submit} style={styles.button}>
           <Text style={styles.text}>{"Log in!"}</Text>
