@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import { Route } from "react-router-native";
+import Search from "./Components/Search";
 
 export const [SEARCH_ROUTE, REMOVE_ROUTE, ADD_ROUTE] = [
   "search",
@@ -11,6 +12,8 @@ export const [SEARCH_ROUTE, REMOVE_ROUTE, ADD_ROUTE] = [
 ];
 
 function Home({ setCurrPage, location }) {
+  const [userLocation, setUserLocation] = useState();
+
   const styles = StyleSheet.create({
     header: {
       backgroundColor: "rgb(41,255,232)",
@@ -28,12 +31,9 @@ function Home({ setCurrPage, location }) {
   });
 
   useEffect(() => {
-    console.log("hi");
     setCurrPage(`home/${SEARCH_ROUTE}`);
   }, []);
-  useEffect(() => {
-    console.log(location);
-  });
+
   return (
     <View>
       <View style={styles.header}>
@@ -84,8 +84,15 @@ function Home({ setCurrPage, location }) {
       <View>
         <Route
           path={`/home/${SEARCH_ROUTE}`}
-          render={() => {
-            return <Text>{SEARCH_ROUTE}</Text>;
+          render={(props) => {
+            return (
+              <Search
+                {...props}
+                setUserLocation={(userLocation) =>
+                  setUserLocation(userLocation)
+                }
+              />
+            );
           }}
         />
         <Route

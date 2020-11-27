@@ -3,11 +3,12 @@ import { View } from "react-native";
 
 import { Route, withRouter } from "react-router-native";
 import { Switch } from "react-native-gesture-handler";
-import Confirmation from "./Confirmation";
-import Signin from "./Signin";
-import Signup from "./Signup";
+
 import { getCurrentUser } from "../reqs";
 import Home from "./Home/Home";
+import Confirmation from "./Confirmation/Confirmation";
+import Signup from "./Signup/Signup";
+import Signin from "./Signin/Signin";
 
 const DEFAULT_ROUTE = "home";
 
@@ -102,7 +103,6 @@ function MainController({ history }) {
           );
         }}
       />
-
       <Route
         path="/home"
         render={(props) => {

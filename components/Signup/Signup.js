@@ -7,9 +7,9 @@ import {
   View,
 } from "react-native";
 
-import { signUp } from "../reqs.js";
+import { signUp } from "../../reqs.js";
 
-import { verifyForm } from "../utils/verify.js";
+import { verifyForm } from "../../utils/verify.js";
 
 const styles = StyleSheet.create({
   container: {

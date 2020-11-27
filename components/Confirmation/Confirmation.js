@@ -7,9 +7,9 @@ import {
   View,
 } from "react-native";
 
-import { confirmSignUp, signUp } from "../reqs.js";
+import { confirmSignUp, signUp } from "../../reqs.js";
 import { Authenticator, SignIn } from "aws-amplify-react-native";
-import { verifyForm } from "../utils/verify.js";
+import { verifyForm } from "../../utils/verify.js";
 
 const SUCCESS = "SUCCESS";
 

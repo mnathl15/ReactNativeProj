@@ -7,9 +7,9 @@ import {
   View,
 } from "react-native";
 
-import { signIn } from "../reqs.js";
+import { signIn } from "../../reqs.js";
 
-import { verifyForm } from "../utils/verify.js";
+import { verifyForm } from "../../utils/verify.js";
 
 const CONFIRMATION_EXCEPTION = "UserNotConfirmedException";
 
